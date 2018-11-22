@@ -11,6 +11,7 @@ namespace Fludixx\Nyqros;
 
 use Fludixx\Nyqros\commands\addSignLink;
 use Fludixx\Nyqros\commands\linkServer;
+use Fludixx\Nyqros\commands\move;
 use Fludixx\Nyqros\commands\serverList;
 use Fludixx\Nyqros\commands\unlinkServer;
 use Fludixx\Nyqros\events\EventListener;
@@ -127,8 +128,14 @@ class Nyqros extends PluginBase {
 					$state = $this->settings['offline'];
 					$pcolor = f::RED;
 				} else {
-					$pcolor = $data[$name]['num'] >= $data[$name]['max'] ? f::RED : f::GREEN;
-					$state = $data[$name]['num'] >= $data[$name]['max'] ? $this->settings['full'] : $this->settings['join'];
+					if(is_string($data[$name]['motd'])) {
+						$pcolor = $data[$name]['num'] >= $data[$name]['max'] ? f::RED : f::GREEN;
+						$state = $data[$name]['num'] >= $data[$name]['max'] ? $this->settings['full'] : $this->settings['join'];
+					} else {
+						$data[$name] = ['num' => 0, 'max' => 0, 'motd' => f::RED . "---"];
+						$state = $this->settings['offline'];
+						$pcolor = f::RED;
+					}
 				}
 				$sign->setText("$name",
 					f::WHITE . $data[$name]['motd'],
@@ -152,6 +159,7 @@ class Nyqros extends PluginBase {
 		$map->register("unlink", new unlinkServer());
 		$map->register("sign", new addSignLink());
 		$map->register("serverList", new serverList());
+		$map->register("move", new move());
 	}
 
 	/**

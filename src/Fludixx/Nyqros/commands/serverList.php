@@ -18,7 +18,6 @@ class serverList extends Command {
 	public function __construct()
 	{
 		parent::__construct("listservers", "/link <server>", "/link <server> <ip> <port>", ['nyqros']);
-		$this->setPermission("nyqros.link");
 	}
 
 	public function execute(CommandSender $sender, string $commandLabel, array $args)
