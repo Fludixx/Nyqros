@@ -1,0 +1,11 @@
+name: Nyqros
+main: Fludixx\Nyqros\Nyqros
+version: 1.0
+description: "Nyqros (Neet Hyperlink cross-connnector)"
+author: Fludixx
+api: [3.0.0]
+permissions:
+  nyqros.link:
+    default: false
+  nyqros.unlink:
+      default: false
