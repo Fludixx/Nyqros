@@ -30,7 +30,7 @@ class addSignLink extends Command {
 			} else {
 				$allLinkedServes = Nyqros::getInstance()->provider->getLinkedServers();
 				if(!isset($allLinkedServes[$args[0]])) {
-					$sender->sendMessage(Nyqros::PREFIX."Server {$args[0]} nicht gefunden!");
+					$sender->sendMessage(Nyqros::PREFIX."Server {$args[0]} not found!");
 					return FALSE;
 				} else {
 					$sender->sendMessage(Nyqros::PREFIX."Please break the Sign to Select it!");

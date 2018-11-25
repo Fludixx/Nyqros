@@ -1,0 +1,13 @@
+---
+provider: yaml
+displayLinkedPlayers: true
+developer_mode: false
+join: §aJOIN
+full: §cFULL
+offline: §cOFFLINE
+mysql:
+  host: 127.0.0.1
+  username: root
+  password: toor
+  database: database
+...

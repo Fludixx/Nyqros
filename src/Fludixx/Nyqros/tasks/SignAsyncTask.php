@@ -22,7 +22,11 @@ class SignAsyncTask extends AsyncTask {
 		$this->linkedServers = $ls;
 	}
 
-	/** @return array|bool */
+	/** @return array|bool
+	 *  @param string $host
+	 *  @param int $port
+	 *  @param int $timeout
+	 */
 	public static function getQueryInfo(string $host, int $port, int $timeout = 4) {
 		$socket = @fsockopen('udp://' . $host, $port, $errno, $errstr, $timeout);
 		if($errno or $socket === false) {

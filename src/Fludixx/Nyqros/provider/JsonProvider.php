@@ -12,7 +12,7 @@ namespace Fludixx\Nyqros\provider;
 use Fludixx\Nyqros\Nyqros;
 use pocketmine\utils\Config;
 
-class YamlProvider implements ProviderInterface {
+class JsonProvider implements ProviderInterface {
 
 	/** @var Nyqros */
 	private $nyqros;
@@ -22,7 +22,7 @@ class YamlProvider implements ProviderInterface {
 	public function __construct()
 	{
 		$this->nyqros = Nyqros::getInstance();
-		$this->config = new Config($this->nyqros->getDataFolder()."/servers.yml", 1);
+		$this->config = new Config($this->nyqros->getDataFolder()."/servers.json", 2);
 	}
 
 	public function linkServer(string $name, string $ip, int $port) : void

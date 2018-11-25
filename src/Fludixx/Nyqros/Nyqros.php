@@ -111,15 +111,35 @@ class Nyqros extends PluginBase {
 		$this->getServer()->getAsyncPool()->submitTask(new SignAsyncTask($this->provider->getLinkedServers()));
 	}
 
+	/**
+	 * @param string $version
+	 * @return bool
+	 */
+	public function checkVersion(string $version) : bool {
+		$version = intval(str_replace('.', '', $version));
+		$server_version =intval(str_replace( '.', '', $this->getServer()->getVersion()));
+		if($server_version - $version >= 100) {
+			return FALSE;
+		} else {
+			return TRUE;
+		}
+	}
+
 	public function AsyncTaskAuswertung(array $data) {
 		$this->isQueryDone = TRUE;
 		if($this->settings['developer_mode']) {
-			$this->getLogger()->debug("AsyncTask evaluation:");
+			$this->getLogger()->info("AsyncTask evaluation:");
 			var_dump($data);
 		}
 		$signs = $this->getSigns();
 		$this->allPlayers = 0;
 		$this->maxPlayers = 0;
+		foreach ($data as $name => $server) {
+			if($this->settings['displayLinkedPlayers']) {
+				$this->allPlayers = $this->allPlayers + (int)$server['num'];
+				$this->maxPlayers = $this->maxPlayers + (int)$server['max'];
+			}
+		}
 		if($signs !== NULL) {
 			foreach ($signs as $sign) {
 				$name = $sign->getLine(0);
@@ -141,10 +161,6 @@ class Nyqros extends PluginBase {
 					f::WHITE . $data[$name]['motd'],
 					$pcolor . $data[$name]['num'] . f::GRAY . "/" . f::RED . $data[$name]['max'],
 					$state);
-				if($this->settings['displayLinkedPlayers']) {
-					$this->allPlayers = $this->allPlayers + (int)$data[$name]['num'];
-					$this->maxPlayers = $this->maxPlayers + (int)$data[$name]['max'];
-				}
 			}
 		}
 	}
