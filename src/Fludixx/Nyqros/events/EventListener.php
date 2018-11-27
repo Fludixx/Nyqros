@@ -87,7 +87,7 @@ class EventListener implements Listener {
 
 	public function onQueryRegen(QueryRegenerateEvent $event) {
 		if(Nyqros::getInstance()->settings['displayLinkedPlayers']) {
-			$event->setPlayerCount(Nyqros::getInstance()->allPlayers+$event->getPlayerCount());
+			$event->setPlayerCount(Nyqros::getInstance()->allPlayers+count($this->main->getServer()->getOnlinePlayers()));
 			$event->setMaxPlayerCount(Nyqros::getInstance()->maxPlayers+$event->getMaxPlayerCount());
 		}
 	}
