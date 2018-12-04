@@ -15,6 +15,7 @@ use Fludixx\Nyqros\commands\move;
 use Fludixx\Nyqros\commands\serverList;
 use Fludixx\Nyqros\commands\unlinkServer;
 use Fludixx\Nyqros\events\EventListener;
+use Fludixx\Nyqros\provider\MySqlProvider;
 use Fludixx\Nyqros\provider\ProviderInterface;
 use Fludixx\Nyqros\provider\YamlProvider;
 use Fludixx\Nyqros\tasks\SignAsyncTask;
@@ -35,12 +36,18 @@ class Nyqros extends PluginBase {
 	public $settings;
 	/** @var ProviderInterface */
 	public $provider;
+	/** @var array */
 	public $players = [];
+	/** @var bool */
 	public $isQueryDone = TRUE;
+	/** @var bool */
+	public $isMysqlDone = TRUE;
 	/** @var int */
 	public $allPlayers;
 	/** @var int */
 	public $maxPlayers;
+	/** @var array */
+	public $linkedServers;
 
 	public function onEnable() : void {
 		Nyqros::$instance = $this;
@@ -74,6 +81,9 @@ class Nyqros extends PluginBase {
 			case 'yaml':
 				$this->provider = new YamlProvider();
 				break;
+			case 'mysql':
+				$this->provider = new MySqlProvider();
+				break;
 			default:
 				$this->provider = new YamlProvider();
 				break;
@@ -105,10 +115,21 @@ class Nyqros extends PluginBase {
 
 	public function callAsyncTask() {
 		if($this->settings['developer_mode']) {
-			$this->getLogger()->debug("calling AsyncTask");
+			$this->getLogger()->debug("calling AsyncTask...");
 		}
-		$this->isQueryDone = FALSE;
-		$this->getServer()->getAsyncPool()->submitTask(new SignAsyncTask($this->provider->getLinkedServers()));
+		if($this->provider instanceof MySqlProvider) {
+			if($this->linkedServers !== NULL) {
+				$this->isQueryDone = FALSE;
+				$this->getServer()->getAsyncPool()->submitTask(new SignAsyncTask($this->linkedServers));
+			} else {
+				if($this->settings['developer_mode']) {
+					$this->getLogger()->debug("abort. Information isent ready yet!");
+				}
+			}
+		} else {
+			$this->isQueryDone = FALSE;
+			$this->getServer()->getAsyncPool()->submitTask(new SignAsyncTask($this->provider->getLinkedServers()));
+		}
 	}
 
 	/**
@@ -117,7 +138,7 @@ class Nyqros extends PluginBase {
 	 */
 	public function checkVersion(string $version) : bool {
 		$version = intval(str_replace('.', '', $version));
-		$server_version =intval(str_replace( '.', '', $this->getServer()->getVersion()));
+		$server_version = intval(str_replace( '.', '', $this->getServer()->getVersion()));
 		if($server_version - $version >= 100) {
 			return FALSE;
 		} else {
@@ -129,7 +150,6 @@ class Nyqros extends PluginBase {
 		$this->isQueryDone = TRUE;
 		if($this->settings['developer_mode']) {
 			$this->getLogger()->info("AsyncTask evaluation:");
-			var_dump($data);
 		}
 		$signs = $this->getSigns();
 		$this->allPlayers = 0;

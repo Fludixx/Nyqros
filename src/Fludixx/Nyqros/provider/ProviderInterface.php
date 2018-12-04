@@ -11,10 +11,16 @@ namespace Fludixx\Nyqros\provider;
 
 interface ProviderInterface {
 
-	/** @return null */
+	/**
+	 * @param string $name
+	 * @param string $ip
+	 * @param int    $port
+	 */
 	public function linkServer(string $name, string $ip, int $port) : void ;
 
-	/** @return null */
+	/**
+	 * @param string $name
+	 */
 	public function unlinkServer(string $name) : void ;
 
 	/** @return array */
